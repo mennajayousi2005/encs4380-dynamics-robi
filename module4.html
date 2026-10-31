@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Module 4: Guess the sensor</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-basic-dist-min@2.35.2/plotly-basic.min.js"></script>
+  <script type="module" src="js/m4.js"></script>
+</head>
+<body>
+  <header id="nav"></header>
+  <main>
+    <h1>Module 4: Guess the sensor</h1>
+    <p class="lead">A hidden sensor, one noisy curve. Work backwards from the curve, the way an engineer does with a real sensor.</p>
+    <div class="layout">
+      <div class="panel">
+        <p id="roundInfo" style="margin-top:0;font-weight:600"></p>
+        <div id="guess"></div>
+        <div id="actions"></div>
+        <p id="message" class="note"></p>
+        <div class="readouts" id="readouts"></div>
+        <p class="note">Each parameter scores 100 within 10% of the true value, falling in a straight line to 0 at 50% error. The round is the average.</p>
+      </div>
+      <div>
+        <div id="response" class="plot"></div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

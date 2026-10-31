@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Module 3: Second-order response</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-basic-dist-min@2.35.2/plotly-basic.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script type="module" src="js/m3.js"></script>
+</head>
+<body>
+  <header id="nav"></header>
+  <main>
+    <h1>Module 3: Second-order response</h1>
+    <p class="lead">An accelerometer is a mass on a spring with a damper. &zeta; decides whether it rings, and &omega;<sub>n</sub> decides how fast.</p>
+    <div class="layout">
+      <div>
+        <div id="predict"></div>
+        <div class="panel" style="margin-top:12px">
+          <div id="controls"></div>
+          <div class="readouts" id="readouts"></div>
+        </div>
+      </div>
+      <div>
+        <div id="response" class="plot"></div>
+        <h2>State-space panel</h2>
+        <p class="note">With x<sub>1</sub> = x and x<sub>2</sub> = &#7819;, the same system is &#7819; = Ax + BF, y = [1 0]x. Its eigenvalues are the poles.</p>
+        <div id="matrices" class="math"></div>
+        <div class="readouts" id="panelReadouts"></div>
+        <div id="splane" class="plot small"></div>
+        <div id="phase" class="plot small"></div>
+        <h2>Our own RK4 against the closed form</h2>
+        <div id="bonus" class="plot small"></div>
+      </div>
+    </div>
+    <h2>Validation</h2>
+    <div id="checks"></div>
+  </main>
+</body>
+</html>

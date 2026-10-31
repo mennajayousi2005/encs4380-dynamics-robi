@@ -1,0 +1,57 @@
+/* Site-wide style. OWNER: Menna. Mobile first: everything stacks on a phone. */
+:root {
+  --ink: #1b2733;
+  --muted: #5d6b78;
+  --line: #d9e0e6;
+  --panel: #f5f8fa;
+  --accent: #1f4e79;
+  --ok: #1e8449;
+  --bad: #c0392b;
+  --wait: #b9770e;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: #fff; line-height: 1.5; }
+header.site { background: var(--accent); padding: 8px 16px; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+header.site a { color: #fff; text-decoration: none; padding: 4px 2px; font-size: 15px; }
+header.site a.active { font-weight: 700; border-bottom: 2px solid #fff; }
+main { max-width: 1040px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 24px; color: var(--accent); margin: 8px 0; }
+h2 { font-size: 18px; color: var(--accent); margin: 24px 0 8px; }
+p.lead { color: var(--muted); margin-top: 0; }
+.layout { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 800px) { .layout { grid-template-columns: 300px 1fr; } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+.plot { width: 100%; height: 300px; }
+.plot.small { height: 240px; }
+.slider { margin-bottom: 10px; }
+.slider label { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; }
+.slider output { font-variant-numeric: tabular-nums; font-weight: 600; }
+.slider input[type=range] { width: 100%; }
+.readouts { display: grid; grid-template-columns: 1fr; gap: 2px; font-size: 14px; margin-top: 8px; }
+.readout { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dotted var(--line); padding: 2px 0; }
+.readout b { font-variant-numeric: tabular-nums; }
+.buttons { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+button { font: inherit; font-size: 14px; padding: 6px 10px; border: 1px solid var(--accent); background: #fff; color: var(--accent); border-radius: 6px; cursor: pointer; }
+button:hover { background: #e8f0f7; }
+button.primary { background: var(--accent); color: #fff; }
+button:disabled { opacity: .5; cursor: default; }
+input[type=number], select { font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 4px; width: 100%; }
+.field { margin-bottom: 8px; font-size: 14px; }
+.predict { border-left: 4px solid var(--accent); }
+.predict .q { font-weight: 600; margin-bottom: 6px; }
+.predict label { display: block; font-size: 14px; margin: 3px 0; }
+.predict .answer { margin-top: 8px; font-size: 14px; }
+.predict .right { color: var(--ok); font-weight: 600; }
+.predict .wrong { color: var(--bad); font-weight: 600; }
+.table-wrap { overflow-x: auto; }
+table.checks { border-collapse: collapse; width: 100%; font-size: 14px; }
+table.checks th { background: var(--accent); color: #fff; text-align: left; padding: 6px 8px; }
+table.checks td { border-bottom: 1px solid var(--line); padding: 5px 8px; font-variant-numeric: tabular-nums; }
+.badge { font-weight: 700; }
+.badge.pass { color: var(--ok); }
+.badge.fail { color: var(--bad); }
+.badge.todo { color: var(--wait); }
+.note { font-size: 14px; color: var(--muted); }
+.todo-banner { background: #fff3d4; border: 1px solid #c9881a; border-radius: 6px; padding: 8px 12px; font-size: 14px; margin: 8px 0; }
+.math { overflow-x: auto; margin: 6px 0; }
+pre.code { background: #1b2733; color: #e6edf3; padding: 10px; border-radius: 6px; overflow-x: auto; font-size: 13px; max-height: 340px; }

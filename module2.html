@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Module 2: First-order frequency response</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-basic-dist-min@2.35.2/plotly-basic.min.js"></script>
+  <script type="module" src="js/m2.js"></script>
+</head>
+<body>
+  <header id="nav"></header>
+  <main>
+    <h1>Module 2: First-order frequency response</h1>
+    <p class="lead">Feed the sensor a sine. The output is smaller and late. How much of each depends on &omega;&tau;.</p>
+    <div class="layout">
+      <div>
+        <div id="predict"></div>
+        <div class="panel" style="margin-top:12px">
+          <div id="controls"></div>
+          <div class="readouts" id="readouts"></div>
+        </div>
+        <div class="panel" style="margin-top:12px">
+          <h2 style="margin-top:0">Dynamic-error calculator</h2>
+          <div id="calculator"></div>
+        </div>
+      </div>
+      <div>
+        <div id="sines" class="plot small"></div>
+        <div id="bodeMag" class="plot small"></div>
+        <div id="bodePhase" class="plot small"></div>
+      </div>
+    </div>
+    <h2>Validation</h2>
+    <div id="checks"></div>
+  </main>
+</body>
+</html>
