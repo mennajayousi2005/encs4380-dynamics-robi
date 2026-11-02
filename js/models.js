@@ -18,8 +18,8 @@ export function firstOrderRamp(t, K, R, tau) {
 // ln of the error fraction for a step. e = 1 - y/(K A), and it should equal e^(-t/tau).
 export function lnErrorFraction(y, K, A) {
   const e = 1 - y / (K * A);
-  if (!(e > 0)) return NaN;   
-  return Math.log(e);         
+  if (!(e > 0)) return NaN;
+  return Math.log(e);
 }
 
 // Least-squares slope of y against x, skipping any NaN points. Module 1 prints it next to -1/tau.
@@ -63,31 +63,35 @@ export function ampRatio(w, tau) {
   return 1 / Math.sqrt(1 + wt * wt);
 }
 
-// Phase in degrees. It is negative, because the output lags. Equation: phi = -atan(w tau)
+// Phase in degrees. It is negative, because the output lags
+//  Equation: phi = -atan(w tau)
 export function phaseDeg(w, tau) {
-  // TODO(Nada): return the equation above, converted from radians to degrees.
-  return NaN;
+  const radToDegree = 180 / Math.PI // to convert red to degree 
+  const phaseInRad = -Math.atan(w * tau);
+  return phaseInRad * radToDegree;
 }
 
-// Dynamic error. Equation: delta = M - 1. It is negative for this sensor.
+// Dynamic error
+//  Equation: delta = M - 1. It is negative for this sensor
 export function dynamicError(M) {
-  // TODO(Nada): return the equation above.
-  return NaN;
+  return M - 1;
 }
 
 // Largest tau that keeps the error within maxError (0.05 means 5%) up to fMax (Hz).
 // Equation: tauMax = sqrt(1 / (1 - maxError)^2 - 1) / (2 pi fMax)
 export function tauMax(fMax, maxError) {
-  // TODO(Nada): return the equation above. Do not use the small-angle shortcut: it gives
-  // 0.503 ms and fails check 3. The right answer for 100 Hz and 5% is 0.523 ms.
-  return NaN;
+  const Mmin = 1 - maxError;
+  const wtMax = Math.sqrt(1 / (Mmin * Mmin) - 1);
+  const wMax = 2 * Math.PI * fMax;
+  return wtMax / wMax;
 }
 
 // Settled output at time t for the input A sin(w t), with K = 1.
-// Equation: y = A M sin(w t + phi), with phi in radians.
+// Equation: y = A M sin(w t + phi), with phi in radians
 export function sineSteady(t, A, w, tau) {
-  // TODO(Nada): return the equation above, using ampRatio. Remember phaseDeg gives degrees.
-  return NaN;
+  const M = ampRatio(w, tau);
+  const phaseInRad = -Math.atan(w * tau);
+  return A * M * Math.sin(w * t + phaseInRad);
 }
 
 // ===== MODULE 3. OWNER: Rand =====
