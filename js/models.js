@@ -6,34 +6,52 @@
 // First-order step response at time t, for a step of size A.
 // Equation: y = K A (1 - e^(-t/tau))
 export function firstOrderStep(t, K, A, tau) {
-  // TODO(Menna): return the equation above. Check 1 turns green when it is right.
-  return NaN;
+  return K * A * (1 - Math.exp(-t / tau));
 }
 
 // First-order response at time t to a ramp input x = R t.
 // Equation: y = K R (t - tau + tau e^(-t/tau))
 export function firstOrderRamp(t, K, R, tau) {
-  // TODO(Menna): return the equation above.
-  return NaN;
+  return K * R * (t - tau + tau * Math.exp(-t / tau));
 }
 
 // ln of the error fraction for a step. e = 1 - y/(K A), and it should equal e^(-t/tau).
 export function lnErrorFraction(y, K, A) {
-  // TODO(Menna):
-  // 1. Compute e = 1 - y / (K * A).
-  // 2. If e <= 0 return NaN, since ln of zero or a negative number is not defined.
-  // 3. Otherwise return Math.log(e).
-  return NaN;
+  const e = 1 - y / (K * A);
+  if (!(e > 0)) return NaN;   
+  return Math.log(e);         
 }
 
 // Least-squares slope of y against x, skipping any NaN points. Module 1 prints it next to -1/tau.
 // Equation: slope = sum((x - xMean)(y - yMean)) / sum((x - xMean)^2)
 export function fitSlope(xs, ys) {
-  // TODO(Menna):
-  // 1. Keep only the pairs where y is a real number.
-  // 2. Compute the two means.
-  // 3. Compute the top and bottom sums and return top / bottom.
-  return NaN;
+  // 1. Keep only the pairs where y is a real number
+  const px = [];
+  const py = [];
+  for (let i = 0; i < xs.length; i++) {
+    if (Number.isFinite(ys[i])) {
+      px.push(xs[i]);
+      py.push(ys[i]);
+    }
+  }
+  if (px.length < 2) return NaN;   // a line needs at least two points
+
+  // 2. Compute the two means
+  let xSum = 0, ySum = 0;
+  for (let i = 0; i < px.length; i++) {
+    xSum += px[i];
+    ySum += py[i];
+  }
+  const xMean = xSum / px.length;
+  const yMean = ySum / py.length;
+
+  // 3. Compute the top and bottom sums and return top / bottom
+  let top = 0, bottom = 0;
+  for (let i = 0; i < px.length; i++) {
+    top += (px[i] - xMean) * (py[i] - yMean);
+    bottom += (px[i] - xMean) * (px[i] - xMean);
+  }
+  return top / bottom;
 }
 
 // ===== MODULE 2. OWNER: Nada =====
