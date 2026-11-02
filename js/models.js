@@ -38,10 +38,11 @@ export function fitSlope(xs, ys) {
 
 // ===== MODULE 2. OWNER: Nada =====
 
-// Amplitude ratio at frequency w (rad/s). Equation: M = 1 / sqrt(1 + (w tau)^2)
+// Amplitude ratio at frequency w (rad/s)
+// Equation: M = 1 / sqrt(1 + (w tau)^2) such that tau is the time constent  in second 
 export function ampRatio(w, tau) {
-  // TODO(Nada): return the equation above. Part of check 2.
-  return NaN;
+  const wt = w * tau;
+  return 1 / Math.sqrt(1 + wt * wt);
 }
 
 // Phase in degrees. It is negative, because the output lags. Equation: phi = -atan(w tau)
