@@ -98,7 +98,7 @@ export function secondOrderStep(t, zeta, wn) {
   //underdamped
   if (zeta < 1) {
     const root = Math.sqrt(1 - zeta * zeta);
-    const wd = wd * root;
+    const wd = wn * root;
     return (
       1 -
       Math.exp(-zeta * wn * t) *
@@ -153,7 +153,7 @@ export function stateMatrices(m, b, k) {
     [-k / m, -b / m],
   ];
   const B = [0, 1 / m];
-  return (A, B);
+  return { A, B };
 }
 
 // Eigenvalues of a 2 by 2 matrix as [{ re, im }, { re, im }].
