@@ -99,8 +99,10 @@ export function sineSteady(t, A, w, tau) {
 // Converts mass, damper and spring into { wn, zeta, K }.
 // Equations: wn = sqrt(k/m), zeta = b / (2 sqrt(k m)), K = 1/k
 export function msdParams(m, b, k) {
-  // TODO(Rand): return { wn, zeta, K } from the equations above.
-  return { wn: NaN, zeta: NaN, K: NaN };
+  const wn = Math.sqrt(k / m);
+  const zeta = b / (2 * Math.sqrt(k * m));
+  const K = 1 / k;
+  return { wn, zeta, K };
 }
 
 // Second-order step response at time t, normalised so that the final value is 1.
@@ -108,37 +110,94 @@ export function msdParams(m, b, k) {
 // Critical:    y = 1 - (1 + wn t) e^(-wn t)
 // Overdamped:  y = 1 - (p2 e^(-p1 t) - p1 e^(-p2 t)) / (p2 - p1), p1,2 = wn (zeta -+ sqrt(zeta^2 - 1))
 export function secondOrderStep(t, zeta, wn) {
-  // TODO(Rand):
+  //
   // 1. If |zeta - 1| < 1e-6, use the critical branch. The other two divide by zero at zeta = 1.
   // 2. If zeta < 1, use the underdamped branch.
   // 3. Otherwise use the overdamped branch.
-  return NaN;
+  // critical branch
+  if (Math.abs(zeta - 1) < 1e-6) {
+    return 1 - (1 + wn * t) * Math.exp(-wn * t);
+  }
+  //underdamped
+  if (zeta < 1) {
+    const root = Math.sqrt(1 - zeta * zeta);
+    const wd = wn * root;
+    return (
+      1 -
+      Math.exp(-zeta * wn * t) *
+        (Math.cos(wd * t) + (zeta / root) * Math.sin(wd * t))
+    );
+  }
+  // overdamped
+  const root = Math.sqrt(zeta * zeta - 1);
+  const p1 = wn * (zeta - root);
+  const p2 = wn * (zeta + root);
+  return 1 - (p2 * Math.exp(-p1 * t) - p1 * Math.exp(-p2 * t)) / (p2 - p1);
 }
 
 // Time window long enough to show the whole response.
 // At least 8 / (zeta wn) when underdamped, and 8 / p1 (the slower pole) otherwise, never above 60 s.
 export function timeWindow(zeta, wn) {
-  // TODO(Rand): return the window above. b = 0 gives zeta = 0, which is why the 60 s cap is needed.
-  return NaN;
+  let T;
+  if (zeta < 1) {
+    T = 8 / (zeta * wn); // zeta = 0 gives Infinity, and the cap below turns it into 60 s
+  } else {
+    const p1 = wn * (zeta - Math.sqrt(zeta * zeta - 1)); // the slower pole decides how long it takes
+    T = 8 / p1;
+  }
+  return Math.min(T, 60);
 }
 
 // The two poles of G(s) as [{ re, im }, { re, im }]. Equation: s = -zeta wn +- wn sqrt(zeta^2 - 1)
 export function poles(zeta, wn) {
-  // TODO(Rand): compute from zeta and wn only, never from the matrix A. Handle zeta < 1, where the
-  // square root is imaginary. Part of check 6.
-  return [{ re: NaN, im: NaN }, { re: NaN, im: NaN }];
+  const disc = zeta * zeta - 1;
+  // underdamped, the poles are complex because the square root is imaginary
+  if (disc < 0) {
+    const re = -zeta * wn;
+    const im = wn * Math.sqrt(-disc);
+    return [
+      { re, im },
+      { re, im: -im },
+    ];
+  }
+  // critical or overdamped we'll have two real roots and they will be equal roots if zeta =1
+  const root = wn * Math.sqrt(disc);
+
+  return [
+    { re: -zeta * wn + root, im: 0 },
+    { re: -zeta * wn - root, im: 0 },
+  ];
 }
 
 // The state-space matrices. A = [[0, 1], [-k/m, -b/m]] and B = [0, 1/m]
 export function stateMatrices(m, b, k) {
-  // TODO(Rand): return { A, B } with the values above.
-  return { A: [[NaN, NaN], [NaN, NaN]], B: [NaN, NaN] };
+  const A = [
+    [0, 1],
+    [-k / m, -b / m],
+  ];
+  const B = [0, 1 / m];
+  return { A, B };
 }
 
 // Eigenvalues of a 2 by 2 matrix as [{ re, im }, { re, im }].
 // Equation: lambda = (tr +- sqrt(tr^2 - 4 det)) / 2
 export function eigenvalues2x2(A) {
-  // TODO(Rand): compute from the entries of A only, never from zeta or wn. If both this function and
-  // poles() shared a line of code, "they are the same numbers" would prove nothing.
-  return [{ re: NaN, im: NaN }, { re: NaN, im: NaN }];
+  const tr = A[0][0] + A[1][1]; // trace = a + d
+  const det = A[0][0] * A[1][1] - A[0][1] * A[1][0]; // determinant = ad - bc
+  const disc = tr * tr - 4 * det;
+  if (disc < 0) {
+    // Complex pair
+    const re = tr / 2;
+    const im = Math.sqrt(-disc) / 2;
+    return [
+      { re, im },
+      { re, im: -im },
+    ];
+  }
+  // Two real eigenvalues
+  const root = Math.sqrt(disc);
+  return [
+    { re: (tr + root) / 2, im: 0 },
+    { re: (tr - root) / 2, im: 0 },
+  ];
 }
