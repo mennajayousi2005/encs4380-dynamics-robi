@@ -70,7 +70,7 @@ function render() {
   const { wn, zeta, K } = msdParams(m.value, b.value, k.value);
   banner.show(Number.isNaN(wn) || Number.isNaN(secondOrderStep(1, 0.5, 2)));
   const T = timeWindow(zeta, wn);
-  const t = Number.isFinite(T) ? linspace(0, T, 1001) : [];
+  const t = Number.isFinite(T) ? linspace(0, T, 4001) : []; // fine enough to read fast peaks in a 60 s window
   const y = t.map(v => K * F * secondOrderStep(v, zeta, wn));
   const final = K * F;
   const met = readMetrics(t, y, final);
@@ -84,9 +84,11 @@ function render() {
   rRise.set(met.rise === null ? 'none' : fmt(met.rise, 3, 's'));
   rPeak.set(met.peakTime === null ? 'none' : fmt(met.peakTime, 3, 's'));
   rOS.set(met.overshoot === 0 ? 'none' : fmt(met.overshoot, 3, '%'));
-  rSettle.set(met.settling === null ? 'does not settle in this window' : fmt(met.settling, 3, 's'));
+  // With b = 0 (zeta = 0) it rings forever. A sample can still land inside the band by chance, so say so directly.
+  const settleText = s => (zeta === 0 ? 'never settles (b = 0)' : s === null ? 'does not settle in this window' : fmt(s, 3, 's'));
+  rSettle.set(settleText(met.settling));
   const met5 = readMetrics(t, y, final, 0.05);
-  rSettle5.set(met5.settling === null ? 'does not settle in this window' : fmt(met5.settling, 3, 's'));
+  rSettle5.set(settleText(met5.settling));
   rSettleF.set(zeta > 0 && zeta < 1 ? fmt(4 / (zeta * wn), 3, 's') : 'not for this case');
   // Slide 68 writes arctan(-wd / delta), with the angle taken in the second quadrant: pi - atan(wd / delta).
   const wd = wn * Math.sqrt(1 - zeta * zeta);

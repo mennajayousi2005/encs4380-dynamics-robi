@@ -56,23 +56,22 @@ export function fitSlope(xs, ys) {
 
 // ===== MODULE 2. OWNER: Nada =====
 
-// Amplitude ratio at frequency w (rad/s)
-// Equation: M = 1 / sqrt(1 + (w tau)^2) such that tau is the time constent  in second 
+// Amplitude ratio at frequency w (rad/s), with tau the time constant in seconds.
+// Equation: M = 1 / sqrt(1 + (w tau)^2)
 export function ampRatio(w, tau) {
   const wt = w * tau;
   return 1 / Math.sqrt(1 + wt * wt);
 }
 
-// Phase in degrees. It is negative, because the output lags
-//  Equation: phi = -atan(w tau)
+// Phase in degrees. It is negative, because the output lags.
+// Equation: phi = -atan(w tau)
 export function phaseDeg(w, tau) {
-  const radToDegree = 180 / Math.PI // to convert red to degree 
+  const radToDegree = 180 / Math.PI; // converts radians to degrees
   const phaseInRad = -Math.atan(w * tau);
   return phaseInRad * radToDegree;
 }
 
-// Dynamic error
-//  Equation: delta = M - 1. It is negative for this sensor
+// Dynamic error. Equation: delta = M - 1. It is negative for this sensor.
 export function dynamicError(M) {
   return M - 1;
 }
@@ -80,6 +79,7 @@ export function dynamicError(M) {
 // Largest tau that keeps the error within maxError (0.05 means 5%) up to fMax (Hz).
 // Equation: tauMax = sqrt(1 / (1 - maxError)^2 - 1) / (2 pi fMax)
 export function tauMax(fMax, maxError) {
+  if (!(fMax > 0) || !(maxError > 0 && maxError < 1)) return NaN; // e.g. 0 Hz typed into the calculator
   const Mmin = 1 - maxError;
   const wtMax = Math.sqrt(1 / (Mmin * Mmin) - 1);
   const wMax = 2 * Math.PI * fMax;
@@ -87,7 +87,7 @@ export function tauMax(fMax, maxError) {
 }
 
 // Settled output at time t for the input A sin(w t), with K = 1.
-// Equation: y = A M sin(w t + phi), with phi in radians
+// Equation: y = A M sin(w t + phi), with phi in radians.
 export function sineSteady(t, A, w, tau) {
   const M = ampRatio(w, tau);
   const phaseInRad = -Math.atan(w * tau);
@@ -110,15 +110,14 @@ export function msdParams(m, b, k) {
 // Critical:    y = 1 - (1 + wn t) e^(-wn t)
 // Overdamped:  y = 1 - (p2 e^(-p1 t) - p1 e^(-p2 t)) / (p2 - p1), p1,2 = wn (zeta -+ sqrt(zeta^2 - 1))
 export function secondOrderStep(t, zeta, wn) {
-  //
   // 1. If |zeta - 1| < 1e-6, use the critical branch. The other two divide by zero at zeta = 1.
   // 2. If zeta < 1, use the underdamped branch.
   // 3. Otherwise use the overdamped branch.
-  // critical branch
+  // Critical
   if (Math.abs(zeta - 1) < 1e-6) {
     return 1 - (1 + wn * t) * Math.exp(-wn * t);
   }
-  //underdamped
+  // Underdamped
   if (zeta < 1) {
     const root = Math.sqrt(1 - zeta * zeta);
     const wd = wn * root;
@@ -128,7 +127,7 @@ export function secondOrderStep(t, zeta, wn) {
         (Math.cos(wd * t) + (zeta / root) * Math.sin(wd * t))
     );
   }
-  // overdamped
+  // Overdamped
   const root = Math.sqrt(zeta * zeta - 1);
   const p1 = wn * (zeta - root);
   const p2 = wn * (zeta + root);
@@ -151,7 +150,7 @@ export function timeWindow(zeta, wn) {
 // The two poles of G(s) as [{ re, im }, { re, im }]. Equation: s = -zeta wn +- wn sqrt(zeta^2 - 1)
 export function poles(zeta, wn) {
   const disc = zeta * zeta - 1;
-  // underdamped, the poles are complex because the square root is imaginary
+  // Underdamped: the square root is imaginary, so the poles are a complex pair
   if (disc < 0) {
     const re = -zeta * wn;
     const im = wn * Math.sqrt(-disc);
@@ -160,7 +159,7 @@ export function poles(zeta, wn) {
       { re, im: -im },
     ];
   }
-  // critical or overdamped we'll have two real roots and they will be equal roots if zeta =1
+  // Critical or overdamped: two real poles, equal when zeta = 1
   const root = wn * Math.sqrt(disc);
 
   return [

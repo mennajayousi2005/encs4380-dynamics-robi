@@ -26,7 +26,7 @@ REPLACE: add one screenshot per module before tagging v1.0.
 | File | Owner |
 |---|---|
 | `js/ui.js`, `js/plot.js`, `js/validate.js`, `js/nav.js`, `js/checks.js`, `js/home.js`, `index.html`, `css/style.css` | Menna (already working) |
-| `js/predict.js` | Menna (to fill in) |
+| `js/predict.js` | Menna |
 | `js/models.js` | Each owner fills their own section |
 | `module1.html`, `js/m1.js` | Menna |
 | `module2.html`, `js/m2.js` | Nada |
@@ -38,6 +38,7 @@ REPLACE: add one screenshot per module before tagging v1.0.
 The course allows AI coding assistants if we say what we used them for.
 
 - The starter code (page layouts, shared controls, page wiring and the outlines of the functions we filled in) was generated with Claude. Every member has read the parts they use and can explain them.
-- Menna: REPLACE with what you used AI for.
-- Nada: REPLACE with what you used AI for.
-- Rand: REPLACE with what you used AI for.
+- Before Checkpoint 1, Claude also reviewed our code against the statement. From that review we fixed the peak time in `readMetrics` when b = 0, made Module 3 say that b = 0 never settles, used a finer time grid in Module 3, made `tauMax` reject a frequency of 0, and tidied the comments in `models.js` and `metrics.js`.
+- Menna: used Claude while writing the Module 1 functions in `models.js` and `addPredict` in `predict.js`, following the TODO steps in the starter.
+- Nada: used ChatGPT while writing the Module 2 functions in `models.js` (`ampRatio`, `phaseDeg`, `dynamicError`, `tauMax`, `sineSteady`), following the TODO steps in the starter.
+- Rand: used ChatGPT while writing the Module 3 functions in `models.js` and `readMetrics` in `metrics.js`, following the TODO steps in the starter.
