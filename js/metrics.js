@@ -30,19 +30,25 @@ export function readMetrics(t, y, final, band = 0.02) {
     if (y[i] > y[peakIndex]) peakIndex = i;
   }
   const peak = y[peakIndex];
-  let peakTime = t[peakIndex] - t0;
+
+  // Peak time is the first peak above final, not the highest one: with b = 0 every peak has the same
+  // height, and sampling would otherwise pick a late one. If there is no such peak, use the highest sample.
+  let firstPeak = peakIndex;
+  for (let i = 1; i < n - 1; i++) {
+    if (y[i] > final && y[i] >= y[i - 1] && y[i] > y[i + 1]) {
+      firstPeak = i;
+      break;
+    }
+  }
+  let peakTime = t[firstPeak] - t0;
 
   // 3. Overshoot: (peak - final) / |final| * 100. Clamp at 0, since rounding can give a tiny negative.
   const overshoot = Math.max(0, ((peak - final) / Math.abs(final)) * 100);
-  if (overshoot < 0.01) peakTime = null;
+  if (overshoot < 0.01) peakTime = null; // below 0.01% there is no real peak
 
-  /**
-     If the overshoot is below 0.01, set peakTime = null, as there is no real peak.
-  4. Settling: walk backwards from the end to the last sample outside band * |final|.
-     If the very last sample is outside, settling = null (it does not settle in this window).
-     Otherwise settling = the time of the next sample, or 0 if no sample is outside.
-
-     *  */
+  // 4. Settling: walk backwards from the end to the last sample outside band * |final|.
+  //    If the very last sample is outside, settling = null (it does not settle in this window).
+  //    Otherwise settling = the time of the next sample, or 0 if no sample is outside.
   const limit = band * Math.abs(final);
   let lastOutside = -1;
   for (let i = n - 1; i >= 0; i--) {

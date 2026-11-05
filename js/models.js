@@ -6,69 +6,92 @@
 // First-order step response at time t, for a step of size A.
 // Equation: y = K A (1 - e^(-t/tau))
 export function firstOrderStep(t, K, A, tau) {
-  // TODO(Menna): return the equation above. Check 1 turns green when it is right.
-  return NaN;
+  return K * A * (1 - Math.exp(-t / tau));
 }
 
 // First-order response at time t to a ramp input x = R t.
 // Equation: y = K R (t - tau + tau e^(-t/tau))
 export function firstOrderRamp(t, K, R, tau) {
-  // TODO(Menna): return the equation above.
-  return NaN;
+  return K * R * (t - tau + tau * Math.exp(-t / tau));
 }
 
 // ln of the error fraction for a step. e = 1 - y/(K A), and it should equal e^(-t/tau).
 export function lnErrorFraction(y, K, A) {
-  // TODO(Menna):
-  // 1. Compute e = 1 - y / (K * A).
-  // 2. If e <= 0 return NaN, since ln of zero or a negative number is not defined.
-  // 3. Otherwise return Math.log(e).
-  return NaN;
+  const e = 1 - y / (K * A);
+  if (!(e > 0)) return NaN;
+  return Math.log(e);
 }
 
 // Least-squares slope of y against x, skipping any NaN points. Module 1 prints it next to -1/tau.
 // Equation: slope = sum((x - xMean)(y - yMean)) / sum((x - xMean)^2)
 export function fitSlope(xs, ys) {
-  // TODO(Menna):
-  // 1. Keep only the pairs where y is a real number.
-  // 2. Compute the two means.
-  // 3. Compute the top and bottom sums and return top / bottom.
-  return NaN;
+  // 1. Keep only the pairs where y is a real number
+  const px = [];
+  const py = [];
+  for (let i = 0; i < xs.length; i++) {
+    if (Number.isFinite(ys[i])) {
+      px.push(xs[i]);
+      py.push(ys[i]);
+    }
+  }
+  if (px.length < 2) return NaN;   // a line needs at least two points
+
+  // 2. Compute the two means
+  let xSum = 0, ySum = 0;
+  for (let i = 0; i < px.length; i++) {
+    xSum += px[i];
+    ySum += py[i];
+  }
+  const xMean = xSum / px.length;
+  const yMean = ySum / py.length;
+
+  // 3. Compute the top and bottom sums and return top / bottom
+  let top = 0, bottom = 0;
+  for (let i = 0; i < px.length; i++) {
+    top += (px[i] - xMean) * (py[i] - yMean);
+    bottom += (px[i] - xMean) * (px[i] - xMean);
+  }
+  return top / bottom;
 }
 
 // ===== MODULE 2. OWNER: Nada =====
 
-// Amplitude ratio at frequency w (rad/s). Equation: M = 1 / sqrt(1 + (w tau)^2)
+// Amplitude ratio at frequency w (rad/s), with tau the time constant in seconds.
+// Equation: M = 1 / sqrt(1 + (w tau)^2)
 export function ampRatio(w, tau) {
-  // TODO(Nada): return the equation above. Part of check 2.
-  return NaN;
+  const wt = w * tau;
+  return 1 / Math.sqrt(1 + wt * wt);
 }
 
-// Phase in degrees. It is negative, because the output lags. Equation: phi = -atan(w tau)
+// Phase in degrees. It is negative, because the output lags.
+// Equation: phi = -atan(w tau)
 export function phaseDeg(w, tau) {
-  // TODO(Nada): return the equation above, converted from radians to degrees.
-  return NaN;
+  const radToDegree = 180 / Math.PI; // converts radians to degrees
+  const phaseInRad = -Math.atan(w * tau);
+  return phaseInRad * radToDegree;
 }
 
 // Dynamic error. Equation: delta = M - 1. It is negative for this sensor.
 export function dynamicError(M) {
-  // TODO(Nada): return the equation above.
-  return NaN;
+  return M - 1;
 }
 
 // Largest tau that keeps the error within maxError (0.05 means 5%) up to fMax (Hz).
 // Equation: tauMax = sqrt(1 / (1 - maxError)^2 - 1) / (2 pi fMax)
 export function tauMax(fMax, maxError) {
-  // TODO(Nada): return the equation above. Do not use the small-angle shortcut: it gives
-  // 0.503 ms and fails check 3. The right answer for 100 Hz and 5% is 0.523 ms.
-  return NaN;
+  if (!(fMax > 0) || !(maxError > 0 && maxError < 1)) return NaN; // e.g. 0 Hz typed into the calculator
+  const Mmin = 1 - maxError;
+  const wtMax = Math.sqrt(1 / (Mmin * Mmin) - 1);
+  const wMax = 2 * Math.PI * fMax;
+  return wtMax / wMax;
 }
 
 // Settled output at time t for the input A sin(w t), with K = 1.
 // Equation: y = A M sin(w t + phi), with phi in radians.
 export function sineSteady(t, A, w, tau) {
-  // TODO(Nada): return the equation above, using ampRatio. Remember phaseDeg gives degrees.
-  return NaN;
+  const M = ampRatio(w, tau);
+  const phaseInRad = -Math.atan(w * tau);
+  return A * M * Math.sin(w * t + phaseInRad);
 }
 
 // ===== MODULE 3. OWNER: Rand =====
@@ -87,15 +110,14 @@ export function msdParams(m, b, k) {
 // Critical:    y = 1 - (1 + wn t) e^(-wn t)
 // Overdamped:  y = 1 - (p2 e^(-p1 t) - p1 e^(-p2 t)) / (p2 - p1), p1,2 = wn (zeta -+ sqrt(zeta^2 - 1))
 export function secondOrderStep(t, zeta, wn) {
-  //
   // 1. If |zeta - 1| < 1e-6, use the critical branch. The other two divide by zero at zeta = 1.
   // 2. If zeta < 1, use the underdamped branch.
   // 3. Otherwise use the overdamped branch.
-  // critical branch
+  // Critical
   if (Math.abs(zeta - 1) < 1e-6) {
     return 1 - (1 + wn * t) * Math.exp(-wn * t);
   }
-  //underdamped
+  // Underdamped
   if (zeta < 1) {
     const root = Math.sqrt(1 - zeta * zeta);
     const wd = wn * root;
@@ -105,7 +127,7 @@ export function secondOrderStep(t, zeta, wn) {
         (Math.cos(wd * t) + (zeta / root) * Math.sin(wd * t))
     );
   }
-  // overdamped
+  // Overdamped
   const root = Math.sqrt(zeta * zeta - 1);
   const p1 = wn * (zeta - root);
   const p2 = wn * (zeta + root);
@@ -128,7 +150,7 @@ export function timeWindow(zeta, wn) {
 // The two poles of G(s) as [{ re, im }, { re, im }]. Equation: s = -zeta wn +- wn sqrt(zeta^2 - 1)
 export function poles(zeta, wn) {
   const disc = zeta * zeta - 1;
-  // underdamped, the poles are complex because the square root is imaginary
+  // Underdamped: the square root is imaginary, so the poles are a complex pair
   if (disc < 0) {
     const re = -zeta * wn;
     const im = wn * Math.sqrt(-disc);
@@ -137,7 +159,7 @@ export function poles(zeta, wn) {
       { re, im: -im },
     ];
   }
-  // critical or overdamped we'll have two real roots and they will be equal roots if zeta =1
+  // Critical or overdamped: two real poles, equal when zeta = 1
   const root = wn * Math.sqrt(disc);
 
   return [
