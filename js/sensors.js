@@ -14,22 +14,56 @@ export function gaussian(std) {
   return std * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 
-// Picks a hidden sensor. Half the time first order: { order: 1, K, tau }, K from 0.5 to 5, tau from 0.5 to 10 s.
-// Otherwise second order: { order: 2, zeta, wn }, zeta from 0.2 to 0.7, wn from 1 to 10 rad/s.
-// zeta stays below 0.7 because overshoot and peak time must be readable: at 0.8 the overshoot is 1.5%, lost in the noise.
 export function randomSensor() {
-  // TODO(Nada): use Math.random() < 0.5 to choose the order, and randomBetween for the values.
-  return { order: 1, K: NaN, tau: NaN };
+  if (Math.random() < 0.5) { //Math.random() is in [0, 1), so "< 0.5" is true exactly half the time
+    return {
+      order: 1,
+      K: randomBetween(0.5, 5),     //the final value of a unit step
+      tau: randomBetween(0.5, 10),  //time constant
+    };
+  }
+  return {
+    order: 2,
+    zeta: randomBetween(0.2, 0.7),  //damping ratio: overshoot from 30% down to 4.6%
+    wn: randomBetween(1, 10),       //natural frequency
+  };
 }
 
-// The clean output of a sensor at time t. input is { type: 'step' } or { type: 'sine', w }. Amplitude 1.
+//The clean output of a sensor at time t.
+//input is { type: 'step' } or { type: 'sine', w }. Amplitude 1.
 export function sensorOutput(sensor, input, t) {
-  // TODO(Nada):
-  // 1. Second order: return secondOrderStep(t, sensor.zeta, sensor.wn).
-  // 2. First order with a step: return firstOrderStep(t, sensor.K, 1, sensor.tau).
-  // 3. First order with a sine: return sensor.K * sineSteady(t, 1, input.w, sensor.tau).
-  return NaN;
+
+  if (!sensor || !input || !Number.isFinite(t)) {
+    return NaN;
+  }
+  // Before the input starts the sensor reads 0. This also stops the step formulas going negative.
+  if (t < 0) {
+    return 0;
+  }
+  if (sensor.order === 2) {
+    if (input.type !== 'step')
+      return NaN;
+    return secondOrderStep(t, sensor.zeta, sensor.wn);
+  }
+
+  //anything other than first or second order is unknown
+  if (sensor.order !== 1) {
+    return NaN;
+  }
+  //first order
+  if (input.type === 'step') {
+    return firstOrderStep(t, sensor.K, 1, sensor.tau);
+  }
+
+  //first order with a sine of amplitude 1
+  //sineSteady assumes K = 1 
+  if (input.type === 'sine') {
+    return sensor.K * sineSteady(t, 1, input.w, sensor.tau);
+  }
+
+  return NaN;   //unknown input type
 }
+
 
 // Prepares one round: the input, the time axis, and the noisy curve the user will read.
 // Returns { input, t, u, y }. u is the input signal for sine rounds, and null for steps.
