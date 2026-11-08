@@ -197,6 +197,8 @@ export function scoreParam(guess, truth) {
   if (error >= 0.5 - EPS) {
     return 0;
   }
+  return 100 * (0.5 - error) / 0.4;
+
 }
 
 
