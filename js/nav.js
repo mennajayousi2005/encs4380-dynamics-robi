@@ -4,7 +4,7 @@
 export const PAGES = [
   { href: "index.html", label: "Home", ready: true },
   { href: "module1.html", label: "Module 1", ready: true },
-  { href: "module2.html", label: "Module 2", ready: false },
+  { href: "module2.html", label: "Module 2", ready: true },
   { href: "module3.html", label: "Module 3", ready: true },
-  { href: "module4.html", label: "Module 4", ready: false },
+  { href: "module4.html", label: "Module 4", ready: true },
 ];
