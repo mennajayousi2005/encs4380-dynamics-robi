@@ -14,7 +14,23 @@ ENCS4380 Interfacing Techniques, Birzeit University. Instructor: Dr. Wasel Ghane
 
 ## Screenshots
 
-REPLACE: add one screenshot per module before tagging v1.0.
+### Home: validation checks
+![Home](screenshots/home.png)
+
+### Module 1: First-order time response
+![Module 1](screenshots/module1.png)
+
+### Module 2: First-order frequency response
+![Module 2](screenshots/module2.png)
+
+### Module 3: Second-order response and state space
+![Module 3](screenshots/module3(a).png)
+
+### Module 3: Second-order response and state space
+![Module 3](screenshots/module3(b).png)
+
+### Module 4: Guess the sensor
+![Module 4](screenshots/module4.png)
 
 ## How to work on this repository
 
