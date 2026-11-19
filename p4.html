@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P4: Tuning challenge</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-basic-dist-min@2.35.2/plotly-basic.min.js"></script>
+  <script type="module" src="js/p4.js"></script>
+</head>
+<body>
+  <header id="nav"></header>
+  <main>
+    <h1>P4: Tuning challenge</h1>
+    <p class="lead">A hidden plant and a spec. Read the plant, choose gains, and see which parts pass.</p>
+    <div class="layout">
+      <div class="panel">
+        <p id="spec" style="margin-top:0;font-weight:600"></p>
+        <div id="predictRun" class="predict"></div>
+        <div id="gains"></div>
+        <div id="actions"></div>
+        <p id="result" style="font-weight:600"></p>
+        <div class="readouts" id="readouts"></div>
+      </div>
+      <div>
+        <div id="output" class="plot"></div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

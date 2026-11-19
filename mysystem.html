@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My system: the Micromouse drive motor</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-basic-dist-min@2.35.2/plotly-basic.min.js"></script>
+  <script type="module" src="js/mysystem.js"></script>
+</head>
+<body>
+  <header id="nav"></header>
+  <main>
+    <h1>My system: the Micromouse drive motor</h1>
+    <p class="lead">The speed loop for our own Micromouse: the plant, the spec and why, the design, and the code.</p>
+    <div class="panel"><h2 style="margin-top:0">The plant and the spec</h2><div class="readouts" id="facts"></div></div>
+    <h2>The design</h2>
+    <div class="layout">
+      <div class="panel">
+        <div id="controls"></div>
+        <div class="readouts" id="readouts"></div>
+        <p class="note">PI puts a zero in the closed loop, so the measured overshoot is higher than the usual table says.</p>
+      </div>
+      <div>
+        <div id="output" class="plot small"></div>
+        <div id="control" class="plot small"></div>
+      </div>
+    </div>
+    <h2>Arduino code</h2>
+    <pre class="code" id="code"></pre>
+  </main>
+</body>
+</html>
