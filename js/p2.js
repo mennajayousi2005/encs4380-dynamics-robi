@@ -193,3 +193,51 @@ addPredict(document.getElementById('predict'), [
 ], [tauS, Kp, Ki, Kd, lockable(presets)]);
 
 render();
+
+//checks for P2
+// Same settings as the presets: K = tau = 1, Kd = 0, u limit off, T = 30 s like render().
+function p2Run(Kp, Ki, tauSValue) {
+  return simulate({ ...defaultRun(), plant: { type: 'first', K: 1, tau: 1 }, Kp, Ki, Kd: 0, tauS: tauSValue, T: 30 });
+}
+
+function p2Checks() {
+  const piRun = p2Run(9, 50, 0.1); // PI preset, final value 1
+  const pRun = p2Run(9, 0, 1);     // P only preset, final value 0.9
+  return [
+    { label: 'PI, K<sub>p</sub> = 9, K<sub>i</sub> = 50: stability limit &tau;<sub>s</sub>', expected: 0.25, tol: 0.001, unit: 's', value: tauSCrit(1, 1, 9, 50, 0) },
+    { label: 'P only, K<sub>p</sub> = 9: no stability limit', expected: null, value: tauSCrit(1, 1, 9, 0, 0) },
+    { label: 'PI, K<sub>p</sub> = K<sub>i</sub> = 1: no stability limit', expected: null, value: tauSCrit(1, 1, 1, 1, 0) },
+    { label: 'PI 9, 50, &tau;<sub>s</sub> = 0.1 s: true overshoot', expected: 79.4, tol: 0.5, unit: '%', value: overshoot(piRun.y, 1) },
+    { label: 'PI 9, 50, &tau;<sub>s</sub> = 0.1 s: what the sensor says', expected: 57.7, tol: 0.5, unit: '%', value: overshoot(piRun.ym, 1) },
+    { label: 'P only, &tau;<sub>s</sub> = 1 s: true overshoot', expected: 177.9, tol: 0.5, unit: '%', value: overshoot(pRun.y, 0.9) },
+    { label: 'P only, &tau;<sub>s</sub> = 1 s: what the sensor says', expected: 35.2, tol: 0.5, unit: '%', value: overshoot(pRun.ym, 0.9) },
+  ];
+}
+
+function renderP2Checks() {
+  const box = document.getElementById('checks');
+  if (!box) return;
+  const rows = p2Checks().map((c, i) => {
+    const unit = c.unit || '';
+    let shown, pass;
+    if (c.expected === null) {
+      pass = c.value === null;
+      shown = c.value === null ? 'none' : fmt(c.value, 3, unit);
+    } else {
+      pass = Number.isFinite(c.value) && Math.abs(c.value - c.expected) <= c.tol;
+      shown = Number.isFinite(c.value) ? fmt(c.value, 4, unit) : '&mdash;';
+    }
+    const expected = c.expected === null ? 'none' : `${c.expected} ${unit}`;
+    const tol = c.expected === null ? '' : `&plusmn;${c.tol} ${unit}`;
+    const result = pass
+      ? '<span class="badge pass">Pass</span>'
+      : '<span class="badge fail">Fail</span>';
+    return `<tr><td>${i + 1}</td><td>${c.label}</td><td>${expected}</td><td>${shown}</td><td>${tol}</td><td>${result}</td></tr>`;
+  }).join('');
+  box.innerHTML = `<div class="table-wrap"><table class="checks"><thead><tr><th>#</th><th>Test</th><th>Expected</th><th>Our value</th><th>Tolerance</th><th>Result</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+try {
+  renderP2Checks();
+} catch (err) {
+  console.error('P2 checks failed:', err);
+}

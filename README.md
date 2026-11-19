@@ -12,7 +12,7 @@ ENCS4380 Interfacing Techniques, Birzeit University. Instructor: Dr. Wasel Ghane
 | Nada | Module 2, Module 4 |
 | Rand | Module 3 with the state-space panel, metrics and RK4 solver |
 
-## Screenshots
+## Screenshots HW1
 
 ### Home: validation checks
 ![Home](screenshots/home.png)
@@ -32,13 +32,60 @@ ENCS4380 Interfacing Techniques, Birzeit University. Instructor: Dr. Wasel Ghane
 ### Module 4: Guess the sensor
 ![Module 4](screenshots/module4.png)
 
+## Homework 2: Control
+
+The [Control](https://mennajayousi2005.github.io/encs4380-dynamics-robi/control.html) page links to every module below. Each module keeps the "Predict, then check" box from Homework 1.
+
+| Page | What it shows | Owner |
+|---|---|---|
+| [P1: PID playground](https://mennajayousi2005.github.io/encs4380-dynamics-robi/p1.html) | What P, I and D each do to rise time, overshoot, settling time and steady-state error, with the limit on u | Menna |
+| [P2: A slow sensor in the loop](https://mennajayousi2005.github.io/encs4380-dynamics-robi/p2.html) | The true output against what a slow sensor reports, and the sensor time constant at which the loop starts to oscillate | Nada |
+| P3: Digital PID | The sampling time Ts, anti-windup, and the generated Arduino code | Rand |
+| P4: Tuning challenge | Tune a hidden random plant to meet a spec | Rand |
+| My system | PI speed control for our Micromouse drive motor | Nada |
+
+### How the Control section connects to Homework 1
+
+- **The same plants.** The first-order plant K/(τs + 1) is the Module 1 model, and the second-order plant is the Module 3 mass-spring-damper.
+- **The same solver.** `simulate()` in `js/engine.js` steps the plant with Rand's RK4 solver from Homework 1 (`js/rk4.js`) at h = 1 ms. The controller runs every Ts and holds u in between, as an Arduino would.
+- **The same metrics.** Rise time, overshoot and settling time come from `readMetrics` in `js/metrics.js`.
+- **The same sensor model.** In P2 the sensor obeys τs·ẏm + ym = y, the first-order sensor from Module 1.
+- **The Homework 1 checks still pass** after the Control section was added.
+
+### Validation checks
+
+| Page | Check | Expected |
+|---|---|---|
+| P1 | P only, Kp = 9: closed-loop time constant and error | 0.1 s, 10% |
+| P1 | PI, Kp = Ki = 1: ωn, ζ and y(1 s) | 1 rad/s, 1, 0.632 |
+| P1 | Any PI: steady-state error | 0% |
+| P2 | PI 9, 50: stability limit τs (Routh) | 0.25 s |
+| P2 | P only, and PI with Kp = Ki = 1: no stability limit | none |
+| P2 | PI 9, 50, τs = 0.1 s: true and sensor overshoot | 79.4%, 57.7% |
+| P2 | P only, τs = 1 s: true and sensor overshoot | 177.9%, 35.2% |
+
+
+### Screenshots HW2
+
+#### Control : Main Page
+![Home](screenshots/homeControl.png)
+
+#### P1: PID Playground
+![P1](screenshots/p1a.png)
+![P1](screenshots/p1b.png)
+
+#### P2: A Slow Sensor in the Loop
+![P2](screenshots/p2.png)
+
 ## How to work on this repository
 
 1. Open the folder in VS Code and start it with the **Live Server** extension. Opening a page by double-click breaks the JavaScript modules.
 2. In VS Code, search for your own tag, for example `TODO(Nada)`. That is your task list. A TODO says what to compute, with the equation.
 3. Fill in your functions. Until a function is done it returns `NaN`: the page keeps working and its check shows "To do". When it is right, the check turns green.
 4. When your module works, set `ready: true` for it in `js/nav.js`, so that it appears in the menu.
+5. Homework 2 work goes on its own branch (`p1`, `p2`, `p3`, `p4`, `my-system`) and is merged into `main` when the page works. Each part has its own GitHub Issue.
 
+### Homework 1 files
 | File | Owner |
 |---|---|
 | `js/ui.js`, `js/plot.js`, `js/validate.js`, `js/nav.js`, `js/checks.js`, `js/home.js`, `index.html`, `css/style.css` | Menna (already working) |
@@ -49,9 +96,22 @@ ENCS4380 Interfacing Techniques, Birzeit University. Instructor: Dr. Wasel Ghane
 | `module3.html`, `js/m3.js`, `js/metrics.js`, `js/rk4.js` | Rand |
 | `module4.html`, `js/m4.js`, `js/sensors.js` | Nada |
 
+### Homework 2 files
+
+| File | Owner |
+|---|---|
+| `js/engine.js` | Menna |
+| `control.html`, `js/control.js`, `p1.html`, `js/p1.js`, `js/control_checks.js` | Menna  |
+| `p2.html`, `js/p2.js` | Nada |
+| `mysystem.html`, `js/mysystem.js`, `js/my_system.js`, `arduino/step_test/step_test.ino` | Nada |
+| `p3.html`, `js/p3.js`, `js/arduino.js` | Rand |
+| `p4.html`, `js/p4.js` | Rand |
+
 ## Use of AI assistants
 
 The course allows AI coding assistants if we say what we used them for.
+
+### Homework 1
 
 - The starter code (page layouts, shared controls, page wiring and the outlines of the functions we filled in) was generated with Claude. Every member has read the parts they use and can explain them.
 - Before Checkpoint 1, Claude also reviewed our code against the statement. From that review we fixed the peak time in `readMetrics` when b = 0, made Module 3 say that b = 0 never settles, used a finer time grid in Module 3, made `tauMax` reject a frequency of 0, and tidied the comments in `models.js` and `metrics.js`.
@@ -59,15 +119,8 @@ The course allows AI coding assistants if we say what we used them for.
 - Nada: used ChatGPT while writing the Module 2 functions in `models.js` (`ampRatio`, `phaseDeg`, `dynamicError`, `tauMax`, `sineSteady`), following the TODO steps in the starter.
 - Rand: used ChatGPT while writing the Module 3 functions in `models.js` and `readMetrics` in `metrics.js`, following the TODO steps in the starter.
 
+### Homework 2
 
-## Homework 2: Control section
-
-| Member | Part |
-|---|---|
-| Menna | Closed-loop engine (`js/engine.js`), P1, the three validation checks |
-| Nada | P2, My system (`js/my_system.js`, `js/mysystem.js`), the step test |
-| Rand | P3 and the Arduino generator (`js/arduino.js`), P4 |
-
-How to use the starter: copy these files into the repository on the `hw2` branch. Search for your own tag, for example `TODO(Rand)`. Files that say "already working" need no change, but you must be able to explain them. Set `ready: true` in `js/nav.js` once a page works.
-
-The starter code for Homework 2 was also generated with Claude, as stated in the AI section above. Add what each member used AI for in Homework 2.
+- The starter code for Homework 2 was also generated with Claude.
+- Menna: used Claude to explain the simulator and to draft `simulate`, `piLoop` and `kdMax` in `js/engine.js`
+- P2: used Claude to understand the Routh condition behind `tauSCrit` and build the P2 validation table
