@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P3: Digital PID</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-basic-dist-min@2.35.2/plotly-basic.min.js"></script>
+  <script type="module" src="js/p3.js"></script>
+</head>
+<body>
+  <header id="nav"></header>
+  <main>
+    <h1>P3: Digital PID</h1>
+    <p class="lead">An Arduino reads the sensor only every T<sub>s</sub> and holds u in between. That hold acts as a delay.</p>
+    <div class="layout">
+      <div>
+        <div id="predict"></div>
+        <div class="panel" style="margin-top:12px">
+          <div id="presets"></div>
+          <div id="controls"></div>
+          <div class="readouts" id="readouts"></div>
+        </div>
+      </div>
+      <div>
+        <div id="output" class="plot small"></div>
+        <p id="status" class="note"></p>
+        <div id="control" class="plot small"></div>
+        <div id="sweepOS" class="plot small"></div>
+        <div id="sweepTs" class="plot small"></div>
+      </div>
+    </div>
+    <h2>Arduino code for these gains</h2>
+    <div id="copyRow"></div>
+    <p id="copyNote" class="note"></p>
+    <pre class="code" id="code"></pre>
+  </main>
+</body>
+</html>

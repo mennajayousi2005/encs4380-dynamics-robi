@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P1: PID playground</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/plotly.js-basic-dist-min@2.35.2/plotly-basic.min.js"></script>
+  <script type="module" src="js/p1.js"></script>
+</head>
+<body>
+  <header id="nav"></header>
+  <main>
+    <h1>P1: PID playground</h1>
+    <p class="lead">Each gain changes the response in its own way. Start with P only, then add I, then D.</p>
+    <svg viewBox="0 0 640 110" role="img" aria-label="Feedback loop: setpoint, summing point, PID controller, limit, plant, output, with the sensor in the feedback path" style="width:100%;max-width:640px;display:block;margin:0 auto 12px">
+      <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#1f4e79"/></marker></defs>
+      <g font-size="13" text-anchor="middle" fill="#1b2733">
+        <text x="22" y="34">r</text>
+        <circle cx="70" cy="30" r="11" fill="none" stroke="#1f4e79"/><text x="70" y="35">&#8721;</text>
+        <rect x="120" y="10" width="110" height="40" rx="5" fill="#e8f0f7" stroke="#1f4e79"/><text x="175" y="35">PID</text>
+        <rect x="280" y="10" width="80" height="40" rx="5" fill="#e8f0f7" stroke="#1f4e79"/><text x="320" y="35">Limit</text>
+        <rect x="410" y="10" width="110" height="40" rx="5" fill="#e8f0f7" stroke="#1f4e79"/><text x="465" y="35">Plant</text>
+        <text x="605" y="34">y</text>
+        <rect x="280" y="66" width="80" height="34" rx="5" fill="#e8f0f7" stroke="#1f4e79"/><text x="320" y="88">Sensor</text>
+        <text x="100" y="24">e</text><text x="255" y="24">u</text>
+      </g>
+      <g stroke="#1f4e79" fill="none">
+        <path d="M34,30 H58" marker-end="url(#arrow)"/><path d="M81,30 H120" marker-end="url(#arrow)"/>
+        <path d="M230,30 H280" marker-end="url(#arrow)"/><path d="M360,30 H410" marker-end="url(#arrow)"/>
+        <path d="M520,30 H592" marker-end="url(#arrow)"/><path d="M560,30 V83 H360" marker-end="url(#arrow)"/>
+        <path d="M280,83 H70 V41" marker-end="url(#arrow)"/>
+      </g>
+    </svg>
+    <div class="layout">
+      <div>
+        <div id="predict"></div>
+        <div class="panel" style="margin-top:12px">
+          <div id="presets"></div>
+          <div id="controls"></div>
+          <div class="readouts" id="readouts"></div>
+        </div>
+      </div>
+      <div>
+        <div id="output" class="plot"></div>
+        <p id="status" class="note"></p>
+        <div id="control" class="plot small"></div>
+        <p class="note">A first-order plant has no overshoot to calm under P alone. With PI, the overshoot comes from the integrator and the controller's zero, so there K<sub>d</sub> does not remove it. Use the second-order plant to see the classic D effect.</p>
+      </div>
+    </div>
+    <h2>Validation (first-order plant, K = &tau; = 1, u limit off)</h2>
+    <div id="checks"></div>
+  </main>
+</body>
+</html>
