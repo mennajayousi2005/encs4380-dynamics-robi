@@ -10,22 +10,87 @@ import { MY_SYSTEM } from './my_system.js';
 // The tauS where the loop reaches steady oscillation, from Routh, for first order with Kd = 0.
 // Equation: tauS_crit = tau (1 + K Kp) / (tau K Ki - 1 - K Kp)
 export function tauSCrit(K, tau, Kp, Ki, Kd) {
-  // TODO(Nada):
-  // 1. If Kd is not 0, return null: the equation does not hold, so the page hides the line.
-  // 2. Compute the denominator. If it is 0 or negative, return null: no tauS makes this loop unstable.
-  // 3. Otherwise return the equation above. For K = tau = 1, Kp = 9, Ki = 50 it gives 0.25 s.
-  return NaN;
+
+  //check if any input is not a valid finite number
+  if (!Number.isFinite(K) || !Number.isFinite(tau) || !Number.isFinite(Kp) || !Number.isFinite(Ki) || !Number.isFinite(Kd))
+    return null;
+
+  if (Kd !== 0)
+    return null;
+  if (tau <= 0)
+    return null;
+
+  const num = tau * (1 + K * Kp);
+  const den = tau * K * Ki - 1 - K * Kp;
+  if (num <= 0 || den <= 0) {
+    return null;
+  }
+
+  const tauCrit = num / den;
+
+  if (Number.isFinite(tauCrit)) {
+    return tauCrit;
+  } else {
+    return null;
+  }
 }
+
 
 // Describes a run in words, for the status line under the plot.
 export function describeRun(res, final) {
-  // TODO(Nada):
-  // 1. If res.diverged, return 'Unstable: the oscillation grows.'
-  // 2. Look at the last 2 s of res.y. If it still swings by more than 2% of |final|,
-  //    return 'Still oscillating at the end of the run.'
-  // 3. Otherwise return 'Settles.'
-  return 'TODO(Nada): describeRun in js/p2.js';
+
+  // Check if the simulation has valid data
+  if (!res || !Array.isArray(res.y) || !Array.isArray(res.t) || res.y.length === 0 || res.y.length !== res.t.length || !Number.isFinite(final)) {
+    return 'No data.';
+  }
+  if (res.diverged) {
+    return 'Unstable: the oscillation grows.';
+  }
+  const t = res.t;
+  const y = res.y;
+  const tEnd = t[t.length - 1];
+
+  if (!Number.isFinite(tEnd)) {
+    return 'No data.';
+  }
+  let min = Infinity;
+  let max = -Infinity;
+  let hasData = false;
+
+  for (let i = 0; i < y.length; i++) {
+    if (!Number.isFinite(t[i])) {
+      return 'No data.';
+    }
+    if (!Number.isFinite(y[i])) {
+      return 'Unstable: the oscillation grows.';
+    }
+
+    if (t[i] >= tEnd - 2) {
+      if (y[i] < min) min = y[i];
+      if (y[i] > max) max = y[i];
+
+      hasData = true;
+    }
+  }
+  if (!hasData) {
+    return 'No data.';
+  }
+
+  //calculate the output variation
+  const swing = max - min;
+
+  if (!Number.isFinite(swing)) {
+    return 'Unstable: the oscillation grows.';
+  }
+  const band = 0.02 * Math.max(Math.abs(final), 1e-9);
+  if (swing > band) {
+    return 'Still oscillating at the end of the run.';
+  }
+
+  return 'Settles.';
 }
+
+
 
 renderNav();
 const banner = addTodoBanner(document.querySelector('main'), 'Waiting for simulate() from Menna, and TODO(Nada) in js/p2.js.');
@@ -119,7 +184,7 @@ function render() {
   });
   const traces = [line(sweep, oss, 'True overshoot (a gap means unstable)', { connectgaps: false })];
   if (crit !== null && !Number.isNaN(crit) && crit <= maxS) traces.push(vline(crit, 0, Math.max(...oss.filter(v => v !== null), 100), 'Stability limit'));
-  draw('sweep', traces, { xaxis: { title: 'Sensor τs (s)' }, yaxis: { title: 'Overshoot (%)' } });
+  draw('sweep', traces, { xaxis: { title: 'Sensor τs (s)' }, yaxis: { title: 'Overshoot (%)', range: [0, 400] } });
 }
 
 addPredict(document.getElementById('predict'), [
