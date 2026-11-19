@@ -15,7 +15,7 @@ ENCS4380 Interfacing Techniques, Birzeit University. Instructor: Dr. Wasel Ghane
 ## Screenshots HW1
 
 ### Home: validation checks
-![Home](screenshots/home.png)
+![Home](screenshots/Home.png)
 
 ### Module 1: First-order time response
 ![Module 1](screenshots/module1.png)
@@ -44,7 +44,7 @@ The [Control](https://mennajayousi2005.github.io/encs4380-dynamics-robi/control.
 | P4: Tuning challenge | Tune a hidden random plant to meet a spec | Rand |
 | My system | PI speed control for our Micromouse drive motor | Nada |
 
-### How the Control section connects to Homework 1
+## How the Control section connects to Homework 1
 
 - **The same plants.** The first-order plant K/(τs + 1) is the Module 1 model, and the second-order plant is the Module 3 mass-spring-damper.
 - **The same solver.** `simulate()` in `js/engine.js` steps the plant with Rand's RK4 solver from Homework 1 (`js/rk4.js`) at h = 1 ms. The controller runs every Ts and holds u in between, as an Arduino would.
@@ -52,29 +52,16 @@ The [Control](https://mennajayousi2005.github.io/encs4380-dynamics-robi/control.
 - **The same sensor model.** In P2 the sensor obeys τs·ẏm + ym = y, the first-order sensor from Module 1.
 - **The Homework 1 checks still pass** after the Control section was added.
 
-### Validation checks
+## Screenshots HW2
 
-| Page | Check | Expected |
-|---|---|---|
-| P1 | P only, Kp = 9: closed-loop time constant and error | 0.1 s, 10% |
-| P1 | PI, Kp = Ki = 1: ωn, ζ and y(1 s) | 1 rad/s, 1, 0.632 |
-| P1 | Any PI: steady-state error | 0% |
-| P2 | PI 9, 50: stability limit τs (Routh) | 0.25 s |
-| P2 | P only, and PI with Kp = Ki = 1: no stability limit | none |
-| P2 | PI 9, 50, τs = 0.1 s: true and sensor overshoot | 79.4%, 57.7% |
-| P2 | P only, τs = 1 s: true and sensor overshoot | 177.9%, 35.2% |
-
-
-### Screenshots HW2
-
-#### Control : Main Page
+### Control : Main Page
 ![Home](screenshots/homeControl.png)
 
-#### P1: PID Playground
+### P1: PID Playground
 ![P1](screenshots/p1a.png)
 ![P1](screenshots/p1b.png)
 
-#### P2: A Slow Sensor in the Loop
+### P2: A Slow Sensor in the Loop
 ![P2](screenshots/p2.png)
 
 ## How to work on this repository
@@ -85,7 +72,7 @@ The [Control](https://mennajayousi2005.github.io/encs4380-dynamics-robi/control.
 4. When your module works, set `ready: true` for it in `js/nav.js`, so that it appears in the menu.
 5. Homework 2 work goes on its own branch (`p1`, `p2`, `p3`, `p4`, `my-system`) and is merged into `main` when the page works. Each part has its own GitHub Issue.
 
-### Homework 1 files
+## Homework 1 files
 | File | Owner |
 |---|---|
 | `js/ui.js`, `js/plot.js`, `js/validate.js`, `js/nav.js`, `js/checks.js`, `js/home.js`, `index.html`, `css/style.css` | Menna (already working) |
@@ -96,7 +83,7 @@ The [Control](https://mennajayousi2005.github.io/encs4380-dynamics-robi/control.
 | `module3.html`, `js/m3.js`, `js/metrics.js`, `js/rk4.js` | Rand |
 | `module4.html`, `js/m4.js`, `js/sensors.js` | Nada |
 
-### Homework 2 files
+## Homework 2 files
 
 | File | Owner |
 |---|---|
