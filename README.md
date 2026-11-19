@@ -60,8 +60,6 @@ The course allows AI coding assistants if we say what we used them for.
 - Rand: used ChatGPT while writing the Module 3 functions in `models.js` and `readMetrics` in `metrics.js`, following the TODO steps in the starter.
 
 
-# Add this to README.md when the hw2 branch is merged, then delete this file
-
 ## Homework 2: Control section
 
 | Member | Part |
