@@ -4,13 +4,13 @@ ENCS4380 Interfacing Techniques, Birzeit University. Instructor: Dr. Wasel Ghane
 
 **Live site:** https://mennajayousi2005.github.io/encs4380-dynamics-robi/
 
-## Group Robi: who built what
+## Team Members & Contributions
 
-| Member | Module |
-|---|---|
-| Menna | Module 1, shared page code |
-| Nada | Module 2, Module 4 |
-| Rand | Module 3 with the state-space panel, metrics and RK4 solver |
+| Member | Homework 1 | Homework 2 |
+|---|---|---|
+| Menna | Module 1, shared code | Simulator, P1, validation checks |
+| Nada | Module 2, Module 4 | P2, My System |
+| Rand | Module 3, RK4 solver | P3, P4 |
 
 ## Screenshots HW1
 
@@ -25,24 +25,22 @@ ENCS4380 Interfacing Techniques, Birzeit University. Instructor: Dr. Wasel Ghane
 
 ### Module 3: Second-order response and state space
 ![Module 3](screenshots/module3(a).png)
-
-### Module 3: Second-order response and state space
 ![Module 3](screenshots/module3(b).png)
 
 ### Module 4: Guess the sensor
 ![Module 4](screenshots/module4.png)
 
-## Homework 2: Control
+## Screenshots HW2
 
-The [Control](https://mennajayousi2005.github.io/encs4380-dynamics-robi/control.html) page links to every module below. Each module keeps the "Predict, then check" box from Homework 1.
+### Control : Main Page
+![Control Main Page](screenshots/homeControl.png)
 
-| Page | What it shows | Owner |
-|---|---|---|
-| [P1: PID playground](https://mennajayousi2005.github.io/encs4380-dynamics-robi/p1.html) | What P, I and D each do to rise time, overshoot, settling time and steady-state error, with the limit on u | Menna |
-| [P2: A slow sensor in the loop](https://mennajayousi2005.github.io/encs4380-dynamics-robi/p2.html) | The true output against what a slow sensor reports, and the sensor time constant at which the loop starts to oscillate | Nada |
-| P3: Digital PID | The sampling time Ts, anti-windup, and the generated Arduino code | Rand |
-| P4: Tuning challenge | Tune a hidden random plant to meet a spec | Rand |
-| My system | PI speed control for our Micromouse drive motor | Nada |
+### P1: PID Playground
+![P1](screenshots/p1a.png)
+![P1](screenshots/p1b.png)
+
+### P2: A Slow Sensor in the Loop
+![P2](screenshots/p2.png)
 
 ## How the Control section connects to Homework 1
 
@@ -51,18 +49,6 @@ The [Control](https://mennajayousi2005.github.io/encs4380-dynamics-robi/control.
 - **The same metrics.** Rise time, overshoot and settling time come from `readMetrics` in `js/metrics.js`.
 - **The same sensor model.** In P2 the sensor obeys τs·ẏm + ym = y, the first-order sensor from Module 1.
 - **The Homework 1 checks still pass** after the Control section was added.
-
-## Screenshots HW2
-
-### Control : Main Page
-![Home](screenshots/homeControl.png)
-
-### P1: PID Playground
-![P1](screenshots/p1a.png)
-![P1](screenshots/p1b.png)
-
-### P2: A Slow Sensor in the Loop
-![P2](screenshots/p2.png)
 
 ## How to work on this repository
 
