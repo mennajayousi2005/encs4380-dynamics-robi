@@ -11,7 +11,7 @@ export const PAGES = [
   { href: 'control.html', label: 'Control', ready: true },
   { href: 'p1.html', label: 'P1', ready: true },
   { href: 'p2.html', label: 'P2', ready: true },
-  { href: 'p3.html', label: 'P3', ready: false },
-  { href: 'p4.html', label: 'P4', ready: false },
+  { href: 'p3.html', label: 'P3', ready: true },
+  { href: 'p4.html', label: 'P4', ready: true },
   { href: 'mysystem.html', label: 'My system', ready: false },
 ];
