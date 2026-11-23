@@ -1,5 +1,3 @@
-// My system: the Micromouse drive motor. OWNER: Nada, with whoever handles the motors in the project.
-// The page wiring below already works once the other modules are in. Nada's parts are marked TODO(Nada).
 import { renderNav, addSlider, addReadout, fmt, addTodoBanner } from './ui.js';
 import { draw, line } from './plot.js';
 import { readMetrics } from './metrics.js';
@@ -7,19 +5,41 @@ import { defaultRun, simulate, thin, piLoop } from './engine.js';
 import { arduinoCode } from './arduino.js';
 import { MY_SYSTEM } from './my_system.js';
 
-// PI gains for a chosen zeta and wn.
-// Equations: Ki = wn^2 tau / K, Kp = (2 zeta wn tau - 1) / K. Kp must not be negative, so wn >= 1 / (2 zeta tau).
+// PI gains for a chosen zeta and wn
+// Equations: Ki = wn^2 tau / K
+//  Kp = (2 zeta wn tau - 1) / K 
+// Kp must not be negative, so wn >= 1 / (2 zeta tau)
 export function piFromDesign(K, tau, zeta, wn) {
-  // TODO(Nada): return { Kp, Ki } from the equations above.
-  return { Kp: NaN, Ki: NaN };
+  // Check valid inputs
+  if (![K, tau, zeta, wn].every(Number.isFinite) || K <= 0 || tau <= 0 || zeta <= 0 || wn <= 0) {
+    return { Kp: NaN, Ki: NaN };
+  }
+  const Ki = (wn * wn * tau) / K;
+  const Kp = (2 * zeta * wn * tau - 1) / K;
+  if (!Number.isFinite(Kp) || !Number.isFinite(Ki)) {
+    return { Kp: NaN, Ki: NaN };
+  }
+  // Prevent negative Kp 
+  if (Kp < -1e-9) {
+    return { Kp: NaN, Ki: NaN };
+  }
+
+  return { Kp: Math.max(Kp, 0), Ki };
 }
 
-// Overshoot in percent from the usual table. Equation: 100 e^(-pi zeta / sqrt(1 - zeta^2))
+
+//Overshoot from the standard second-order formula
 export function tableOvershoot(zeta) {
-  // TODO(Nada): return the equation above. The page shows it next to the measured value:
-  // PI puts a zero in the loop, so the measured overshoot is higher, and the demo should explain why.
-  return NaN;
+  // check zeta is valid
+  if (!Number.isFinite(zeta) || zeta < 0) {
+    return NaN;
+  }
+  if (zeta >= 1) {
+    return 0; // no overshoot when zeta >= 1
+  }
+  return 100 * Math.exp((-Math.PI * zeta) / Math.sqrt(1 - zeta * zeta));
 }
+
 
 renderNav();
 const main = document.querySelector('main');
@@ -40,11 +60,14 @@ addFact('Our spec', MY_SYSTEM.spec);
 addFact('Why it matters', MY_SYSTEM.why);
 
 const controls = document.getElementById('controls');
-const zeta = addSlider(controls, { label: '&zeta; (aim for 0.6 to 0.8)', min: 0.6, max: 0.8, value: 0.7, step: 0.01, onInput: render });
+const savedWn = Math.sqrt(MY_SYSTEM.Ki * K / tau);
+const savedZeta = (1 + K * MY_SYSTEM.Kp) / (2 * Math.sqrt(tau * K * MY_SYSTEM.Ki));
+const hasDesign = Number.isFinite(savedWn) && Number.isFinite(savedZeta);
+const zeta = addSlider(controls, { label: '&zeta; (aim for 0.6 to 0.8)', min: 0.6, max: 0.8, value: hasDesign ? Number(savedZeta.toFixed(2)) : 0.7, step: 0.01, onInput: render });
 // wn stays at or below 0.2 / Ts: faster than that, sampling itself adds overshoot that the design does not expect.
 const wnMin = Number((1 / (2 * 0.6 * tau)).toPrecision(2));
 const wnMax = Math.max(Number(Math.min(40 / tau, 0.2 / MY_SYSTEM.Ts).toPrecision(2)), wnMin * 1.1);
-const wn = addSlider(controls, { label: '&omega;<sub>n</sub>', min: wnMin, max: wnMax, value: Math.min(Number((5 / tau).toPrecision(2)), wnMax), step: 0.1, unit: 'rad/s', onInput: render });
+const wn = addSlider(controls, { label: '&omega;<sub>n</sub>', min: wnMin, max: wnMax, value: hasDesign ? Number(savedWn.toFixed(1)) : Math.min(Number((5 / tau).toPrecision(2)), wnMax), step: 0.1, unit: 'rad/s', onInput: render });
 const out = document.getElementById('readouts');
 const rKp = addReadout(out, 'K<sub>p</sub>');
 const rKi = addReadout(out, 'K<sub>i</sub>');

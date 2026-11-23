@@ -13,5 +13,5 @@ export const PAGES = [
   { href: 'p2.html', label: 'P2', ready: true },
   { href: 'p3.html', label: 'P3', ready: true },
   { href: 'p4.html', label: 'P4', ready: true },
-  { href: 'mysystem.html', label: 'My system', ready: false },
+  { href: 'mysystem.html', label: 'My system', ready: true },
 ];
